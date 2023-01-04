@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {createPullRequest} from 'code-suggester';
-import {PullRequest} from './pull-request';
-import {Commit} from './commit';
+import { createPullRequest } from 'code-suggester';
+import { PullRequest } from './pull-request';
+import { Commit } from './commit';
 
-import {Octokit} from '@octokit/rest';
-import {request} from '@octokit/request';
-import {graphql} from '@octokit/graphql';
-import {RequestError} from '@octokit/request-error';
+import { Octokit } from '@octokit/rest';
+import { request } from '@octokit/request';
+import { graphql } from '@octokit/graphql';
+import { RequestError } from '@octokit/request-error';
 import {
   GitHubAPIError,
   DuplicateReleaseError,
@@ -33,23 +33,23 @@ export const GH_API_URL = 'https://api.github.com';
 export const GH_GRAPHQL_URL = 'https://api.github.com';
 type OctokitType = InstanceType<typeof Octokit>;
 
-import {logger as defaultLogger} from './util/logger';
-import {Repository} from './repository';
-import {ReleasePullRequest} from './release-pull-request';
-import {Update} from './update';
-import {Release} from './release';
-import {ROOT_PROJECT_PATH} from './manifest';
-import {signoffCommitMessage} from './util/signoff-commit-message';
+import { logger as defaultLogger } from './util/logger';
+import { Repository } from './repository';
+import { ReleasePullRequest } from './release-pull-request';
+import { Update } from './update';
+import { Release } from './release';
+import { ROOT_PROJECT_PATH } from './manifest';
+import { signoffCommitMessage } from './util/signoff-commit-message';
 import {
   RepositoryFileCache,
   GitHubFileContents,
   DEFAULT_FILE_MODE,
   FileNotFoundError as MissingFileError,
 } from '@google-automations/git-file-utils';
-import {Logger} from 'code-suggester/build/src/types';
-import {HttpsProxyAgent} from 'https-proxy-agent';
-import {HttpProxyAgent} from 'http-proxy-agent';
-import {PullRequestOverflowHandler} from './util/pull-request-overflow-handler';
+import { Logger } from 'code-suggester/build/src/types';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import { PullRequestOverflowHandler } from './util/pull-request-overflow-handler';
 
 // Extract some types from the `request` package.
 type RequestBuilderType = typeof request;
@@ -223,17 +223,17 @@ export class GitHub {
       return undefined;
     }
 
-    const {host, port} = defaultProxy;
+    const { host, port } = defaultProxy;
 
     return new URL(baseUrl).protocol.replace(':', '') === 'http'
       ? new HttpProxyAgent({
-          host,
-          port,
-        })
+        host,
+        port,
+      })
       : new HttpsProxyAgent({
-          host,
-          port,
-        });
+        host,
+        port,
+      });
   }
 
   /**
@@ -312,7 +312,7 @@ export class GitHub {
     repo: string,
     octokit: OctokitType
   ): Promise<string> {
-    const {data} = await octokit.repos.get({
+    const { data } = await octokit.repos.get({
       repo,
       owner,
     });
@@ -616,7 +616,7 @@ export class GitHub {
   ): AsyncGenerator<PullRequest, void, void> {
     const generator = includeFiles
       ? this.pullRequestIteratorWithFiles(targetBranch, status, maxResults)
-      : this.pullRequestIteratorWithoutFiles(targetBranch, status, maxResults);
+      : this.pullRequestIteratorWithFiles(targetBranch, status, maxResults);
     for await (const pullRequest of generator) {
       yield pullRequest;
     }
@@ -674,7 +674,7 @@ export class GitHub {
       MERGED: 'closed',
     };
     let results = 0;
-    for await (const {data: pulls} of this.octokit.paginate.iterator(
+    for await (const { data: pulls } of this.octokit.paginate.iterator(
       this.octokit.rest.pulls.list,
       {
         state: statusMap[status],
@@ -1195,8 +1195,8 @@ export class GitHub {
       const body = (
         options?.pullRequestOverflowHandler
           ? await options.pullRequestOverflowHandler.handleOverflow(
-              releasePullRequest
-            )
+            releasePullRequest
+          )
           : releasePullRequest.body
       )
         .toString()
@@ -1501,7 +1501,7 @@ export class GitHub {
 
     // use the single file upload API
     const {
-      data: {content},
+      data: { content },
     } = await this.octokit.repos.createOrUpdateFileContents({
       owner: this.repository.owner,
       repo: this.repository.repo,
@@ -1532,7 +1532,7 @@ export class GitHub {
     try {
       const {
         data: {
-          object: {sha},
+          object: { sha },
         },
       } = await this.octokit.git.getRef({
         owner: this.repository.owner,
@@ -1611,7 +1611,7 @@ export class GitHub {
     this.logger.debug(`Creating new branch: ${branchName} at ${branchSha}`);
     const {
       data: {
-        object: {sha},
+        object: { sha },
       },
     } = await this.octokit.git.createRef({
       owner: this.repository.owner,
@@ -1630,7 +1630,7 @@ export class GitHub {
     this.logger.debug(`Updating branch ${branchName} to ${branchSha}`);
     const {
       data: {
-        object: {sha},
+        object: { sha },
       },
     } = await this.octokit.git.updateRef({
       owner: this.repository.owner,
